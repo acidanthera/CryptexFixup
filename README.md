@@ -7,9 +7,9 @@ CryptexFixup
 
 ----------
 
-With macOS Ventura, Apple dropped the last Mac that lacked the [AVX2.0 CPU instruction](https://en.wikipedia.org/wiki/Advanced_Vector_Extensions#Advanced_Vector_Extensions_2), the 2013 Trash Can Mac Pro (MacPro6,1). With this, systems lacking AVX2.0 can no longer boot macOS Ventura natively as Apple has stripped the legacy non-AVX2.0 dyld shared caches from the OS. However due to compatibility issues with Rosetta 2, Apple is forced to retain a pre-AVX2.0 dyld shared cache on Apple Silicon systems.
+With macOS Ventura, Apple finally dropped the last Mac that lacked the [AVX2.0 CPU instruction](https://en.wikipedia.org/wiki/Advanced_Vector_Extensions#Advanced_Vector_Extensions_2), the 2013 Trash Can Mac Pro (MacPro6,1). With this, systems lacking AVX2.0 can no longer boot macOS Ventura natively as Apple has stripped the legacy non-AVX2.0 dyld shared caches from the OS. However due to compatibility issues with Rosetta 2, Apple is forced to retain a pre-AVX2.0 dyld shared cache on Apple Silicon systems.
 
-Thus to support older machines, this kext will force the macOS installer/updater to install the Apple Silicon Cryptex (OS.dmg) instead of the stock Intel variant. More information found under [macOS Ventura and OpenCore Legacy Patcher Support: Issue 998](https://github.com/dortania/OpenCore-Legacy-Patcher/issues/998).
+Thus to support older machines, this kext will force the macOS installer/updater to install the Apple Silicon Cryptex (OS.dmg) instead of the stock Intel variant. More information can be found under [macOS Ventura and OpenCore Legacy Patcher Support: Issue 998](https://github.com/dortania/OpenCore-Legacy-Patcher/issues/998).
 
 
 #### Additional notes:
