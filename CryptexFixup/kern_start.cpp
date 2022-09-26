@@ -13,8 +13,10 @@
 #define MODULE_SHORT "crypt_fix"
 
 static mach_vm_address_t orig_cs_validate {};
-static mach_vm_address_t orig_root_hash_validate {};
+static mach_vm_address_t orig_authenticate_root_hash {};
 
+// ramrod is stored inside a larger binary, UpdateBrainLibary
+// When inspecting the RAM Disk, ramrod's path is '/usr/libexec/ramrod/ramrod'
 static const char *ramrodPath = "UpdateBrainLibrary";
 
 static const uint8_t kCryptexFind[] = {
@@ -31,6 +33,18 @@ static const uint8_t kCryptexReplace[] = {
     0x61, 0x72, 0x6D, 0x36, 0x34, 0x65
 };
 
+static const char *kextAPFS[] {
+    "/System/Library/Extensions/apfs.kext/Contents/MacOS/apfs"
+};
+
+static KernelPatcher::KextInfo kextList[] {
+    {"com.apple.filesystems.apfs", kextAPFS, arrsize(kextAPFS), {true}, {}, KernelPatcher::KextInfo::Unloaded },
+};
+
+static const char *kextAuthHashSymbol[] {
+    "_authenticate_root_hash"
+};
+
 
 #pragma mark - Kernel patching code
 
@@ -38,6 +52,24 @@ template <size_t findSize, size_t replaceSize>
 static inline void searchAndPatch(const void *haystack, size_t haystackSize, const char *path, const uint8_t (&needle)[findSize], const uint8_t (&patch)[replaceSize], const char *name) {
     if (UNLIKELY(KernelPatcher::findAndReplace(const_cast<void *>(haystack), haystackSize, needle, findSize, patch, replaceSize))) {
         DBGLOG(MODULE_SHORT, "found function %s to patch at %s!", name, path);
+    }
+}
+
+static int patched_authenticate_root_hash(int arg0, int arg1, int arg2, int arg3, int arg4, int arg5) {
+    return 0;
+};
+
+static void processKext(KernelPatcher &patcher, size_t index, mach_vm_address_t address, size_t size) {
+    // Check apfs.kext is loaded
+    if (index != kextList[0].loadIndex) {
+        return;
+    }
+
+    // Force '_authenticate_root_hash' to return 0
+    KernelPatcher::RouteRequest request (kextAuthHashSymbol[0], patched_authenticate_root_hash, orig_authenticate_root_hash);
+    if (!patcher.routeMultiple(index, &request, 1, address  , size)) {
+        SYSLOG(MODULE_SHORT, "patcher.routeMultiple for %s failed with error %d", request.symbol, patcher.getError());
+        patcher.clearError();
     }
 }
 
@@ -61,16 +93,23 @@ static void patched_cs_validate_page(vnode_t vp, memory_object_t pager, memory_o
 
 static void pluginStart() {
 	DBGLOG(MODULE_SHORT, "start");
+    if (BaseDeviceInfo::get().cpuHasAvx2) {
+        SYSLOG(MODULE_SHORT, "system natively support AVX2.0, skipping");
+        return;
+    }
+
+    // Userspace Patcher (ramrod)
 	lilu.onPatcherLoadForce([](void *user, KernelPatcher &patcher) {
-        if (BaseDeviceInfo::get().cpuHasAvx2) {
-            SYSLOG(MODULE_SHORT, "system natively support AVX2.0, skipping");
-            return;
-        }
-        
         KernelPatcher::RouteRequest csRoute = KernelPatcher::RouteRequest("_cs_validate_page", patched_cs_validate_page, orig_cs_validate);
         if (!patcher.routeMultipleLong(KernelPatcher::KernelID, &csRoute, 1))
             SYSLOG(MODULE_SHORT, "failed to route cs validation pages");
 	});
+
+    // Kernel Space Patcher (APFS.kext)
+    lilu.onKextLoadForce(kextList, arrsize(kextList),
+    [](void *user, KernelPatcher &patcher, size_t index, mach_vm_address_t address, size_t size) {
+        processKext(patcher, index, address, size);
+    }, nullptr);
 }
 
 // Boot args.
