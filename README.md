@@ -34,6 +34,7 @@ Thus to support older machines, this kext will force the macOS installer/updater
 - `-cryptdbg` (or `-liludbgall`) to enable verbose logging (in DEBUG builds)
 - `-cryptbeta` (or `-lilubetaall`) to enable on macOS newer than 13
 - `-crypt_allow_hash_validation` to disable APFS.kext patching
+- `-crypt_force_avx` to force install the Rosetta Cryptex on AVX2.0 systems
 
 
 #### Credits

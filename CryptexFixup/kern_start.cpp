@@ -94,8 +94,12 @@ static void patched_cs_validate_page(vnode_t vp, memory_object_t pager, memory_o
 static void pluginStart() {
 	DBGLOG(MODULE_SHORT, "start");
 	if (BaseDeviceInfo::get().cpuHasAvx2) {
-		SYSLOG(MODULE_SHORT, "system natively support AVX2.0, skipping");
-		return;
+		if (checkKernelArgument("-crypt_force_avx")) {
+			SYSLOG(MODULE_SHORT, "system natively support AVX2.0, but forcing AVX patch upon user request");
+		} else {
+			SYSLOG(MODULE_SHORT, "system natively support AVX2.0, skipping");
+			return;
+		}
 	}
 
 	// Userspace Patcher (ramrod)
