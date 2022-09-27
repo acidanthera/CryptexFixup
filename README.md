@@ -14,24 +14,26 @@ Thus to support older machines, this kext will force the macOS installer/updater
 
 #### Additional notes:
 
-- Delta Updates will not be supported with patched Cryptexes, full updates will be requested instead.
+- Delta Updates will not be supported with patched Cryptexes, Full Updates will be requested instead.
   - Delta: 1-3GB~
   - Full Update: 12GB
 - If CryptexFixup determines your system already supports AVX2.0, it will not do anything.
   - Systems supporting AVX2.0 natively:
-    - Intel Haswell (2013) and newer
-    - AMD Excavator/Ryzen (2015/2017) and newer
+    - Intel Haswell and newer
+    - AMD Excavator/Ryzen and newer
   - Systems lacking AVX2.0:
     - Intel Ivy Bridge and older
     - AMD Bulldozer/Piledriver/Steamroller and older
 - This kext does not drop the requirement for AVX2.0 in Ventura's Graphics Stack
   - AMD Polaris, Vega and Navi Drivers in Ventura will not function with AVX2.0 support, end users will need to find alternative ways to achieve graphics acceleration
 
+
 #### Boot arguments
 
 - `-cryptoff` (or `-liluoff`) to disable
 - `-cryptdbg` (or `-liludbgall`) to enable verbose logging (in DEBUG builds)
 - `-cryptbeta` (or `-lilubetaall`) to enable on macOS newer than 13
+- `-crypt_allow_hash_validation` to disable APFS.kext patching
 
 
 #### Credits
