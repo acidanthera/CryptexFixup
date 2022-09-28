@@ -25,7 +25,7 @@ Thus to support older machines, this kext will force the macOS installer/updater
     - Intel Ivy Bridge and older
     - AMD Bulldozer/Piledriver/Steamroller and older
 - This kext does not drop the requirement for AVX2.0 in some of Ventura's Graphics Stack
-  - AMD Polaris, Vega and Navi Drivers in Ventura will not function with AVX2.0 support, end users will need to find alternative ways to achieve graphics acceleration
+  - AMD Polaris, Vega and Navi Drivers in Ventura will not function without AVX2.0 support, end users will need to find alternative ways to achieve graphics acceleration
   - Apple's Paravirtualized Graphics Stack still supports pre-AVX2.0 systems
     - ex. VMware Fusion on Monterey host lacking AVX2.0, guest VM running Ventura
 
