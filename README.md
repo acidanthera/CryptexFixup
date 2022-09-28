@@ -1,7 +1,7 @@
 CryptexFixup
 ==============
 
-[![Build Status](https://github.com/acidanthera/CryptexFixup/workflows/CI/badge.svg?branch=master)](https://github.com/khronokernel/CryptexFixup/actions)
+[![Build Status](https://github.com/acidanthera/CryptexFixup/workflows/CI/badge.svg?branch=master)](https://github.com/acidanthera/CryptexFixup/actions)
 
 [Lilu](https://github.com/acidanthera/Lilu) Kernel extension for installing Rosetta Cryptex in macOS Ventura. Applicable for both OS installation and updates.
 
