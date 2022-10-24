@@ -102,23 +102,27 @@ static void pluginStart() {
 		}
 	}
 
-	// Userspace Patcher (ramrod)
-	lilu.onPatcherLoadForce([](void *user, KernelPatcher &patcher) {
-		KernelPatcher::RouteRequest csRoute = KernelPatcher::RouteRequest("_cs_validate_page", patched_cs_validate_page, orig_cs_validate);
-		if (!patcher.routeMultipleLong(KernelPatcher::KernelID, &csRoute, 1))
-			SYSLOG(MODULE_SHORT, "failed to route cs validation pages");
-	});
-
+    // Userspace Patcher (ramrod)
+    // Support Big Sur and newer for in-place Install macOS.app usage
+    if (getKernelVersion() >= KernelVersion::BigSur) {
+        lilu.onPatcherLoadForce([](void *user, KernelPatcher &patcher) {
+            KernelPatcher::RouteRequest csRoute = KernelPatcher::RouteRequest("_cs_validate_page", patched_cs_validate_page, orig_cs_validate);
+            if (!patcher.routeMultipleLong(KernelPatcher::KernelID, &csRoute, 1))
+                SYSLOG(MODULE_SHORT, "failed to route cs validation pages");
+        });
+    }
+    
 	// Kernel Space Patcher (APFS.kext)
-	if (checkKernelArgument("-crypt_allow_hash_validation")) {
-		SYSLOG(MODULE_SHORT, "disabling APFS.kext patching upon user request");
-	} else {
-		lilu.onKextLoadForce(kextList, arrsize(kextList),
-		[](void *user, KernelPatcher &patcher, size_t index, mach_vm_address_t address, size_t size) {
-			processKext(patcher, index, address, size);
-		}, nullptr);
-	}
-
+    if (getKernelVersion() >= KernelVersion::Ventura) {
+        if (checkKernelArgument("-crypt_allow_hash_validation")) {
+            SYSLOG(MODULE_SHORT, "disabling APFS.kext patching upon user request");
+        } else {
+            lilu.onKextLoadForce(kextList, arrsize(kextList),
+                                 [](void *user, KernelPatcher &patcher, size_t index, mach_vm_address_t address, size_t size) {
+                processKext(patcher, index, address, size);
+            }, nullptr);
+        }
+    }
 }
 
 // Boot args.
@@ -143,7 +147,7 @@ PluginConfiguration ADDPR(config) {
 	arrsize(bootargDebug),
 	bootargBeta,
 	arrsize(bootargBeta),
-	KernelVersion::Ventura,
+	KernelVersion::BigSur,
 	KernelVersion::Ventura,
 	pluginStart
 };
