@@ -17,6 +17,8 @@ Thus to support older machines, this kext will force the macOS installer/updater
 - Delta Updates will not be supported with patched Cryptexes, Full Updates will be requested instead.
   - Delta: 1-3GB~
   - Full Update: 12GB
+- [Rapid Secuirty Response Updates](https://support.apple.com/guide/deployment/dep93ff7ea78/web) are currently not supported at this time.
+  - macOS only distributes `x86_64h`-based deltas on x86 machines, which are incompatible with the Rosetta Cryptex.
 - If CryptexFixup determines your system already supports AVX2.0, it will not do anything (unless explicitly requested).
   - Systems supporting AVX2.0 natively:
     - Intel Haswell and newer
