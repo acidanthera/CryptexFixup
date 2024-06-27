@@ -111,7 +111,7 @@ static void pluginStart() {
                 SYSLOG(MODULE_SHORT, "failed to route cs validation pages");
         });
     }
-    
+
 	// Kernel Space Patcher (APFS.kext)
     if (getKernelVersion() >= KernelVersion::Ventura) {
         if (checkKernelArgument("-crypt_allow_hash_validation")) {
@@ -148,6 +148,6 @@ PluginConfiguration ADDPR(config) {
 	bootargBeta,
 	arrsize(bootargBeta),
 	KernelVersion::BigSur,
-	KernelVersion::Sonoma,
+	KernelVersion::Sequoia,
 	pluginStart
 };

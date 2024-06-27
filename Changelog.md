@@ -1,5 +1,8 @@
 CryptexFixup Changelog
 ======================
+#### v1.0.3
+- Added constants for macOS 15 support
+
 #### v1.0.2
 - Added constants for macOS 14 support
 
