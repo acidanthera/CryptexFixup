@@ -1,5 +1,8 @@
 CryptexFixup Changelog
 ======================
+#### v1.0.5
+- Added constants for macOS 26 support
+
 #### v1.0.4
 - Fixed loading on macOS 10.10 and older due to a MacKernelSDK regression
 
